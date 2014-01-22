@@ -8,6 +8,12 @@
         "128": "images/icon-128.png"
     },
     "default_locale": "en",
+    "permissions" :[
+        "tabs",
+        "activeTab",
+        "http://*.google.com/", 
+        "https://*.google.com/"
+    ],
     "background": {
         "scripts": [
             "scripts/background.js"
@@ -18,20 +24,21 @@
             "19": "images/icon-19.png",
             "38": "images/icon-38.png"
         },
-        "default_title": "SOHint",
-        "default_popup": "popup.html"
+        "default_title": "SOHint"
     },
     "options_page": "options.html",
     "content_scripts": [
         {
             "matches": [
-                "http://*/*",
-                "https://*/*"
+                "http://*.google.com/", 
+                "https://*.google.com/"
             ],
             "css": [
                 "styles/main.css"
             ],
             "js": [
+                "bower_components/jquery/jquery.js",
+                "bower_components/underscore/underscore.js",
                 "scripts/contentscript.js"
             ],
             "run_at": "document_end",

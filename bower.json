@@ -1,6 +1,9 @@
 {
   "name": "sohint",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "~2.0.3",
+    "underscore": "~1.5.2"
+  },
   "devDependencies": {}
 }
