@@ -15,6 +15,10 @@
 //   }
 // });
 
+// TODO: onhashchange doesn't exactly pick up
+// each new google search. Explore other window
+// methods to use here.
+
 window.onhashchange = function() {
   var questions = [];
   var searchElements = $('.g');
@@ -59,28 +63,26 @@ function getQuestionsFromSO(questions, urls, elements) {
 
   $.ajax({
     url: encodedURL,
+
     success: function(data) {
       console.log('ajax request success');
       // TODO: determine a way to cache old objects and parse through them before making another API request
-      console.log(data);
+
+      var parsed = _.each(data.items, function(item){
+        _.each(urls, function(url){
+          if (item.question_id === url.question_id) {
+            console.log('match');
+            _.extend(url, item);
+
+            // TODO: Templatize this? I feel really icky
+            // about constructing html this way
+
+            url.parent_element.prepend('<div>Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
+          }
+        });
+      });
+
     }
   });
-
-  var parsed = _.each(data.items, function(item){
-    _.each(urls, function(url){
-      if (item.question_id === url.question_id) {
-        console.log('match');
-        _.extend(url, item);
-
-        // TODO: templatize this snippet
-
-        url.parent_element.prepend('<div>Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
-      }
-    });
-  });
-
   console.log(urls);
-
-
-
 }
