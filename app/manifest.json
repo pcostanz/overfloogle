@@ -39,6 +39,7 @@
             "js": [
                 "bower_components/jquery/jquery.js",
                 "bower_components/underscore/underscore.js",
+                "bower_components/handlebars/handlebars.js",
                 "scripts/contentscript.js"
             ],
             "run_at": "document_end",
