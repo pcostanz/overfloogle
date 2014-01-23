@@ -8,22 +8,39 @@
  
 $(document).ready(function(){
 
-  var target = document.querySelector('#appbar');
-  console.log(target);
+  function checkForAppBar() {
+    var appbar = document.querySelector('#appbar');
 
-  var observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation){
-      if(mutation.type === 'childList'){
-        console.log(mutation);
-        soHintItUp();
-      }
-    });
-  });
-   
-  var config = { attributes: true, childList: true, characterData: true };
-   
-  // pass in the target node, as well as the observer options
-  observer.observe(target, config);
+    if (appbar) {
+      // do stuff
+
+      var timeout = setTimeout(soHintItUp, 850);
+
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation){
+          if(mutation.type === 'childList'){
+            console.log(mutation);
+            var throttledCall = _.throttle(soHintItUp, 550);
+            throttledCall();
+          }
+        });
+      });
+
+      var config = { attributes: true, childList: true, characterData: true };
+       
+      observer.observe(appbar, config);
+    }
+
+    else {
+      // check again in a bit
+      setTimeout(checkForAppBar, 1000);
+    }
+
+  }
+
+  checkForAppBar();
+
+
 
 });
 
@@ -85,6 +102,8 @@ function getQuestionsFromSO(questions, urls, elements) {
           if (item.question_id === url.question_id) {
             console.log('match');
             _.extend(url, item);
+
+            console.log(url.parent_element);
 
             // TODO: Templatize this? I feel really icky
             // about constructing html this way
