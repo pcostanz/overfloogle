@@ -4,16 +4,7 @@
 // for a chrome extension, currently the console
 // is throwing an exception stating that the
 // channel URL must be under the current domain
-
-// SE.init({
-//   clientId: 2524,
-//   key: 'n6ym4a0o4lkM9SzhPFjFAw((',
-//   channelUrl: '//google.com',
-//   complete: function(data) {
-//     console.log('SO auth complete!');
-//     console.log(data);
-//   }
-// });
+// might be a weird thing with SO auth
 
 // TODO: onhashchange doesn't exactly pick up
 // each new google search. Explore other window
