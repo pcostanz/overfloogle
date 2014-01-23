@@ -5,12 +5,33 @@
 // is throwing an exception stating that the
 // channel URL must be under the current domain
 // might be a weird thing with SO auth
+ 
+$(document).ready(function(){
+
+  var target = document.querySelector('#appbar');
+  console.log(target);
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation){
+      if(mutation.type === 'childList'){
+        console.log(mutation);
+        soHintItUp();
+      }
+    });
+  });
+   
+  var config = { attributes: true, childList: true, characterData: true };
+   
+  // pass in the target node, as well as the observer options
+  observer.observe(target, config);
+
+});
 
 // TODO: onhashchange doesn't exactly pick up
 // each new google search. Explore other window
 // methods to use here.
 
-window.onhashchange = function() {
+function soHintItUp() {
   var questions = [];
   var searchElements = $('.g');
   var searchUrls = searchElements.find('.r a');
