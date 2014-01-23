@@ -1,9 +1,5 @@
 'use strict';
 
-function getAnswersFromSO(acceptedAnswer){
-
-};
-
 window.onhashchange = function() {
   var questions = [];
   var searchElements = $('.g');
@@ -57,9 +53,9 @@ function getQuestionsFromSO(questions, urls, elements) {
         console.log('match');
         _.extend(url, item);
 
-        // compile this snippet from handlebars
+        // TODO: templatize this snippet
 
-        url.parent_element.prepend('<div>THIS IS WORKING</div>');
+        url.parent_element.prepend('<div>Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
       }
     });
   });
