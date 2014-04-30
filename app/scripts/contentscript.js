@@ -1,60 +1,53 @@
 'use strict';
+// @TODO: Wrap this whole guy in an IFFE
+// @TODO: Auth api requests to stackoverflow so the app isn't rate limited
+// @REFERENCE: Injecting scripts: http://stackoverflow.com/questions/9515704/building-a-chrome-extension-inject-code-in-a-page-using-a-content-script/9517879#9517879
+// @REFERENCE: Creating events: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
 
-// TODO: determine which channelUrl to use
-// for a chrome extension, currently the console
-// is throwing an exception stating that the
-// channel URL must be under the current domain
-// might be a weird thing with SO auth
- 
-$(document).ready(function(){
 
-  function checkForAppBar() {
-    var appbar = document.querySelector('#appbar');
+var xhrInterceptorFunction = function() {
+  // @TODO: Better variable names in this function
+  var phoneHome = new CustomEvent('googleSearchQuery', {description: 'XHR Intercepted'});
 
-    if (appbar) {
-      // do stuff
-
-      var timeout = setTimeout(soHintItUp, 850);
-
-      var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation){
-          if(mutation.type === 'childList'){
-            console.log(mutation);
-            var throttledCall = _.throttle(soHintItUp, 550);
-            throttledCall();
-          }
-        });
-      });
-
-      var config = { attributes: true, childList: true, characterData: true };
-       
-      observer.observe(appbar, config);
-    }
-
-    else {
-      // check again in a bit
-      setTimeout(checkForAppBar, 1000);
-    }
-
+  var proxied = window.XMLHttpRequest.prototype.open;
+  window.XMLHttpRequest.prototype.open = function() {
+    document.dispatchEvent(phoneHome);
+    return proxied.apply(this, [].slice.call(arguments));
   }
+};
 
-  checkForAppBar();
+function injectScript(functionToInject) {
+  var injectionCode = '(' + functionToInject + ')();';
+
+  var script = document.createElement('script');
+  script.textContent = injectionCode;
+  (document.head || document.documentElement).appendChild(script);
+  script.parentNode.removeChild(script);
+}
+
+injectScript(xhrInterceptorFunction);
 
 
+var addDataToSearchResults = _.throttle(soHintItUp, 2000);
+
+document.addEventListener('googleSearchQuery', function(event) {
+  console.log('googleSearchQuery fired', event);
+
+  // @TODO: Don't use an anonymous function here
+  // @TODO: Init here
+  // @TODO: I'm not convinced that the throttle on this guy is working...
+  addDataToSearchResults();
 
 });
 
-// TODO: onhashchange doesn't exactly pick up
-// each new google search. Explore other window
-// methods to use here.
-
 function soHintItUp() {
+  // @TODO: I need to throttle the API call to stackoverflow, currently I'm throttling this whole thing which isn't really necessary
+  console.log('running throttled function');
+
   var questions = [];
   var searchElements = $('.g');
   var searchUrls = searchElements.find('.r a');
   var urls = [];
-
-  console.log(searchUrls);
 
   _.each(searchUrls, function(elem, index){
 
@@ -80,7 +73,9 @@ function soHintItUp() {
     }
   });
 
-  if(questions) {
+  console.log(questions);
+
+  if(questions.length > 0) {
     getQuestionsFromSO(questions.join(';'), urls, searchElements);
   }
 
@@ -94,26 +89,19 @@ function getQuestionsFromSO(questions, urls, elements) {
     url: encodedURL,
 
     success: function(data) {
-      console.log('ajax request success');
-      // TODO: determine a way to cache old objects and parse through them before making another API request
-
+      console.log('stack overflow api response data', data);
+      $('.soHintInfo').remove();
       var parsed = _.each(data.items, function(item){
         _.each(urls, function(url){
           if (item.question_id === url.question_id) {
-            console.log('match');
             _.extend(url, item);
 
-            console.log(url.parent_element);
+            // @TODO: Break this prepend out into a separate function
 
-            // TODO: Templatize this? I feel really icky
-            // about constructing html this way
-
-            url.parent_element.prepend('<div>Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
+            url.parent_element.prepend('<div class="soHintInfo">Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
           }
         });
       });
-
     }
   });
-  console.log(urls);
 }
