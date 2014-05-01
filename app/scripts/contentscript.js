@@ -35,7 +35,6 @@ document.addEventListener('googleSearchQuery', function(event) {
 
   // @TODO: Don't use an anonymous function here
   // @TODO: Init here
-  // @TODO: I'm not convinced that the throttle on this guy is working...
   addDataToSearchResults();
 
 });
@@ -56,6 +55,9 @@ function soHintItUp() {
       var parentElem = $(elem).closest('.g');
       var href  = $(elem).attr('href');
       var questionId = parseInt(href.split('/')[4]);
+
+      parentElem.wrap('<div class="codesos-container" id="'+ questionId + '"></div>');
+      parentElem.prepend('<span class="codesos-upvote-bgtext"></span>');
 
       questions.push(questionId);
 
@@ -98,7 +100,9 @@ function getQuestionsFromSO(questions, urls, elements) {
 
             // @TODO: Break this prepend out into a separate function
 
-            url.parent_element.prepend('<div class="soHintInfo">Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
+            $('#' + item.question_id + ' .codesos-upvote-bgtext').text(url.score);
+
+          //  url.parent_element.prepend('<div class="soHintInfo">Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
           }
         });
       });
