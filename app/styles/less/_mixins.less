@@ -1,0 +1,15 @@
+// Mixins
+// ------
+
+.square(@size) {
+  height: @size;
+  width: @size;
+}
+
+.button-colors(@resting, @hover) {
+  background: @resting;
+
+  &:hover {
+    background: @hover;
+  }
+} // .button-colors

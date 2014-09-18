@@ -1,0 +1,126 @@
+@keyframes loading {
+  /* line 52, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_variables.less */
+  from {
+    transform: rotate(0deg);
+  }
+  /* line 55, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_variables.less */
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* line 2, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.TEMP-result {
+  margin-bottom: 23px;
+}
+/* line 6, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap {
+  border-radius: 3px;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+/* line 18, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap * {
+  box-sizing: border-box;
+}
+/* line 22, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap button:focus {
+  outline: none;
+}
+/* line 28, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-content {
+  height: 0;
+  overflow: hidden;
+  /* padding: 0 10px; might need some padding here */
+  transition: height 100ms linear;
+}
+/* line 34, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-content.loaded {
+  height: 400px;
+  overflow-y: scroll;
+  margin-bottom: 33px;
+}
+/* line 44, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-tags {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+/* line 49, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-tags button {
+  background: #e0eaf1;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  vertical-align: top;
+}
+/* line 12, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_mixins.less */
+.so-wrap .so-tags button:hover {
+  background: #c4dae9;
+}
+/* line 61, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-expander button {
+  background: #e0eaf1;
+  height: 24px;
+  width: 24px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  bottom: 0;
+  position: absolute;
+  right: 0;
+}
+/* line 12, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_mixins.less */
+.so-wrap .so-expander button:hover {
+  background: #c4dae9;
+}
+/* line 71, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.loading.so-wrap .so-expander button i {
+  animation: loading 0.65s infinite ease-in-out;
+}
+/* line 77, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-item {
+  display: flex;
+}
+/* line 81, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-scorecard {
+  /*    &:after {
+          content: '';
+          display: block;
+          height: 100%;
+          width: 5px;
+          background: @color-tag;
+        }*/
+  border-right: 5px solid #e0eaf1;
+  margin-right: 5px;
+  flex: 1 0 auto;
+  padding-right: 5px;
+  transition: 100ms width linear;
+}
+/* line 97, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-scorecard > * {
+  padding: 2px 5px;
+}
+/* line 100, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-scorecard > * i {
+  padding-right: 2px;
+}
+/* line 109, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-scorecard.nope {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+/* line 119, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap .so-result {
+  flex: 100 1 auto;
+  position: relative;
+}
+/* line 126, /Users/patrickc/Dev-Personal/sohint/app/styles/less/_component.less */
+.so-wrap i + span {
+  padding-left: 5px;
+}

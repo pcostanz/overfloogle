@@ -34,7 +34,7 @@
                 "https://*.google.com/"
             ],
             "css": [
-                "styles/main.css",
+                "styles/css-less/main.css",
                 "bower_components/font-awesome/css/font-awesome.css"
             ],
             "js": [

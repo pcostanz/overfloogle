@@ -110,6 +110,23 @@ module.exports = function (grunt) {
                 }]
             }
         },
+
+        less: {
+          compile: {
+            files: [{
+              expand: true,
+              cwd: 'app/styles/less/',
+              src: ['main.less'],
+              dest: 'app/styles/css-less/',
+              ext: '.css'
+            }],
+            options: {
+              paths: ['app/styles/less/'],
+              dumpLineNumbers: 'comments'
+            }
+          }
+        },
+
         compass: {
             options: {
                 sassDir: '<%= yeoman.app %>/styles',

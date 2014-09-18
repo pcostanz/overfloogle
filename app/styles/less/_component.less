@@ -1,0 +1,130 @@
+// @TODO: TEMPORARY RESULT MOCK...REMOVE
+.TEMP-result {
+  margin-bottom: @search-result-margin-bottom;
+}
+
+.so-wrap { // nest styles to ensure specificity
+  border-radius: @border-radius;
+  font-family: @font-family;
+  font-size: @font-size;
+
+  &:hover,
+  &.active {
+
+  }
+
+  // * Resets / Overrides *
+
+  * {
+    box-sizing: border-box;
+  }
+
+  button:focus {
+    outline: none;
+  }
+
+  // * Component Styling *
+
+  .so-content {
+    height: 0;
+    overflow: hidden;
+    /* padding: 0 10px; might need some padding here */
+    transition: height 100ms linear;
+
+    &.loaded {
+      height: 400px;
+      overflow-y: scroll;
+      margin-bottom: @search-result-margin-bottom + 10px;
+    }
+    // @TODO: Styling - this could be a lot
+    // since we need to make a stack overflow
+    // question and then accepted answer load
+  }
+
+  .so-tags {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    button {
+      .button-colors(@color-tag, @color-tag-hover);
+      border: none;
+      border-radius: @border-radius;
+      cursor: pointer;
+      display: inline-block;
+      font-size: @font-size-tag;
+      vertical-align: top;
+    }
+  } // .so-tags
+
+  .so-expander {
+    button {
+      .button-colors(@color-expander, @color-expander-hover);
+      .square(24px);
+      border: none;
+      border-radius: @border-radius;
+      cursor: pointer;
+      bottom: 0;
+      position: absolute;
+      right: 0;
+
+      .loading& i {
+        animation: loading 0.65s infinite ease-in-out;
+      }
+    } // button
+  } // .so-expander
+
+  .so-item {
+    display: flex;
+  }
+
+  .so-scorecard {
+    // experimental
+
+    // not sure if this is a better way to get spacing after the border
+    /*    &:after {
+          content: '';
+          display: block;
+          height: 100%;
+          width: 5px;
+          background: @color-tag;
+        }*/
+
+    border-right: 5px solid @color-tag;
+    margin-right: 5px; // @TODO: Both should be a single var divided by 2 so that universal spacing can be applied through the widget using it (10px)
+    flex: 1 0 auto;
+
+    > * {
+      padding: 2px 5px;
+
+      i {
+        padding-right: 2px;
+      }
+    }
+
+    padding-right: 5px;
+
+    transition: 100ms width linear;
+
+    &.nope {
+      border: 0;
+      padding: 0;
+      margin: 0;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+  }
+
+  .so-result {
+    flex: 100 1 auto;
+    position: relative;
+  }
+
+
+  // button styles
+  i + span {
+    padding-left: 5px;
+  }
+
+} // .so-wrap
