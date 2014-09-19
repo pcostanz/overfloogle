@@ -29,17 +29,13 @@ module.exports = function (grunt) {
             options: {
                 spawn: false
             },
-            coffee: {
-                files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
-                tasks: ['coffee:dist']
+            less: {
+              files: ['app/styles/less/**/*.less'],
+              tasks: ['less_compile']
             },
             coffeeTest: {
                 files: ['test/spec/{,*/}*.coffee'],
                 tasks: ['coffee:test']
-            },
-            compass: {
-                files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-                tasks: ['compass:server']
             }
         },
         connect: {
@@ -124,6 +120,17 @@ module.exports = function (grunt) {
               paths: ['app/styles/less/'],
               dumpLineNumbers: 'comments'
             }
+          }
+        },
+
+        autoprefixer: {
+          less: {
+            files: [{
+              expand: true,
+              cwd: 'app/styles/css-less/',
+              src: ['**/*.css'],
+              dest: 'app/styles/css-less/'
+            }]
           }
         },
 
@@ -291,6 +298,18 @@ module.exports = function (grunt) {
             }
         }
     });
+
+    // @TODO: Use compile task in build process and remove old generated SASS stuff from tasks
+    // ISSUE: https://github.com/hasPatrickC/sohint/issues/2, https://github.com/hasPatrickC/sohint/issues/3
+
+    grunt.registerTask(
+      'less_compile',
+      'compiles and auto prefixes css',
+      [
+        'less:compile',
+        'autoprefixer:less'
+      ]
+    );
 
     grunt.registerTask('test', [
         'clean:server',
