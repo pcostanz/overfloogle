@@ -1,89 +1,76 @@
 'use strict';
 // @TODO: Wrap this whole guy in an IFFE
 // @TODO: Auth api requests to stackoverflow so the app isn't rate limited
-// @REFERENCE: Injecting scripts: http://stackoverflow.com/questions/9515704/building-a-chrome-extension-inject-code-in-a-page-using-a-content-script/9517879#9517879
-// @REFERENCE: Creating events: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
 
+// @TODO: think this is supposed to be debounce?
 
-var xhrInterceptorFunction = function() {
-  // @TODO: Better variable names in this function
-  var phoneHome = new CustomEvent('googleSearchQuery', {description: 'XHR Intercepted'});
+var run = _.throttle(main, 2000);
 
-  var proxied = window.XMLHttpRequest.prototype.open;
-  window.XMLHttpRequest.prototype.open = function() {
-    document.dispatchEvent(phoneHome);
-    return proxied.apply(this, [].slice.call(arguments));
+document.addEventListener('googleSearchQuery', run);
+
+// Question constructor function
+var Question = function(elem, index) {
+
+  var parentElem = $(elem).closest('.g');
+  var href  = $(elem).attr('href');
+  var questionId = parseInt(href.split('/')[4]);
+
+  this.data = {
+    'linkIndex'          : index,
+    'linkHref'           : href,
+    'question_id'        : questionId,
+    'is_answered'        : null,
+    'view_count'         : null,
+    'score'              : null,
+    'answer_count'       : null,
+    'accepted_answer_id' : null,
+    'parent_element'     : parentElem
   }
 };
 
-function injectScript(functionToInject) {
-  var injectionCode = '(' + functionToInject + ')();';
+var questionsCache = {
+  prev: null,
+  next: null
+};
 
-  var script = document.createElement('script');
-  script.textContent = injectionCode;
-  (document.head || document.documentElement).appendChild(script);
-  script.parentNode.removeChild(script);
-}
+function main() {
 
-injectScript(xhrInterceptorFunction);
-
-
-var addDataToSearchResults = _.throttle(soHintItUp, 2000);
-
-document.addEventListener('googleSearchQuery', function(event) {
-  console.log('googleSearchQuery fired', event);
-
-  // @TODO: Don't use an anonymous function here
-  // @TODO: Init here
-  addDataToSearchResults();
-
-});
-
-function soHintItUp() {
-  // @TODO: I need to throttle the API call to stackoverflow, currently I'm throttling this whole thing which isn't really necessary
-  console.log('running throttled function');
-
+  // @TODO: These variables should be stored on a parent object, and have a method to reset, etc...
+  // this way, they'll be accessible from the other methods that need to access and modify them
   var questions = [];
   var searchElements = $('.g');
   var searchUrls = searchElements.find('.r a');
   var urls = [];
 
-  _.each(searchUrls, function(elem, index){
+  _.each(searchUrls, function(elem, index) {
 
+    // @TODO: Better matching, this is currently causing errors since it'll pick up any stackoverflow url
     if(elem.hostname === 'stackoverflow.com') {
 
-      var parentElem = $(elem).closest('.g');
-      var href  = $(elem).attr('href');
-      var questionId = parseInt(href.split('/')[4]);
+      var questionModel = new Question(elem, index);
+      console.log(questionModel);
 
-      parentElem.wrap('<div class="codesos-container" id="'+ questionId + '"></div>');
-      parentElem.prepend('<span class="codesos-upvote-bgtext"></span>');
+      questions.push(questionModel.data.question_id);
 
-      questions.push(questionId);
-
-      urls.push({
-        'linkIndex' : index,
-        'linkHref' : href,
-        'question_id' : questionId,
-        'is_answered' : null,
-        'view_count' : null,
-        'score' : null,
-        'answer_count' : null,
-        'accepted_answer_id' : null,
-        'parent_element' : parentElem
-      });
+      urls.push(questionModel.data);
     }
   });
 
-  console.log(questions);
+  questionsCache.next = questions;
 
-  if(questions.length > 0) {
-    getQuestionsFromSO(questions.join(';'), urls, searchElements);
+  if (questionsCache.next === questionsCache.prev) {
+    // @TODO: Change comparison logic to an underscore array comparison function
+    return;
+  } else {
+    questionsCache.prev = questionsCache.next;
   }
 
-};
+  if(questions.length > 0) {
+    getQuestionData(questions.join(';'), urls, searchElements);
+  }
+}
 
-function getQuestionsFromSO(questions, urls, elements) {
+function getQuestionData(questions, urls, elements) {
   var uri = 'https://api.stackexchange.com/2.1/questions/' + questions + '?site=stackoverflow';
   var encodedURL = encodeURI(uri);
 
@@ -91,21 +78,42 @@ function getQuestionsFromSO(questions, urls, elements) {
     url: encodedURL,
 
     success: function(data) {
-      console.log('stack overflow api response data', data);
-      $('.soHintInfo').remove();
-      var parsed = _.each(data.items, function(item){
-        _.each(urls, function(url){
-          if (item.question_id === url.question_id) {
-            _.extend(url, item);
+      parseQuestionData(data, urls);
 
-            // @TODO: Break this prepend out into a separate function
-
-            $('#' + item.question_id + ' .codesos-upvote-bgtext').text(url.score);
-
-          //  url.parent_element.prepend('<div class="soHintInfo">Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
-          }
-        });
-      });
     }
   });
+}
+
+function parseQuestionData (data, urls) {
+  _.each(data.items, function(item) {
+    _.each(urls, function(url) {
+      if (item.question_id === url.question_id) {
+       // @TODO: This should be overwriting the data stored in the urls array
+       // and then returning it as a promise (in array format) so that it can
+       // be passed to another function that renders results
+        _.extend(url, item);
+      }
+    });
+  });
+
+  return urls;
+}
+
+function renderQuestionData (questionData) {
+  // @TODO: Build HTML from template here
+  // 1. Add template
+  // 2. Compile template via using handlebars?
+  // 3. Render each template to the dom in some way that makes sense
+
+  //  urls.push({
+  //    'linkIndex'          : index,
+  //    'linkHref'           : href,
+  //    'question_id'        : questionId,
+  //    'is_answered'        : null,
+  //    'view_count'         : null,
+  //    'score'              : null,
+  //    'answer_count'       : null,
+  //    'accepted_answer_id' : null,
+  //    'parent_element'     : parentElem
+  //  });
 }

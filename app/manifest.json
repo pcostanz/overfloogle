@@ -38,6 +38,7 @@
                 "bower_components/font-awesome/css/font-awesome.css"
             ],
             "js": [
+                "scripts/requestInterceptor.js",
                 "scripts/so-auth.js",
                 "bower_components/jquery/jquery.js",
                 "bower_components/underscore/underscore.js",
