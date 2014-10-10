@@ -1,6 +1,8 @@
 (function(){
   'use strict';
 
+  console.log('initializing request interceptor');
+
   /**
    * @module requestInterceptor
    *   Injects a script that will modify the XHR open function
