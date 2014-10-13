@@ -13,6 +13,8 @@
 
   }
 
+  transition: transform 0.5s ease-in-out;
+
   // * Resets / Overrides *
 
   * {
@@ -53,6 +55,7 @@
       cursor: pointer;
       display: inline-block;
       font-size: @font-size-tag;
+      margin-left: 5px;
       vertical-align: top;
     }
   } // .so-tags
@@ -75,7 +78,9 @@
   } // .so-expander
 
   .so-item {
+    background: white;
     display: flex;
+    margin-bottom: 23px;
   }
 
   .so-scorecard {

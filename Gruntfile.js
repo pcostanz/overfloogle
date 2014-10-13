@@ -107,6 +107,16 @@ module.exports = function (grunt) {
             }
         },
 
+        requirejs: {
+          production: {
+            options: {
+              baseUrl: "path/to/base",
+              mainConfigFile: "path/to/config.js",
+              out: "path/to/optimized.js"
+            }
+          }
+        },
+
         less: {
           compile: {
             files: [{

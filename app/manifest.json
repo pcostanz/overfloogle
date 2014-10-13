@@ -21,6 +21,9 @@
         "default_title": "SOHint"
     },
     "options_page": "options.html",
+    "web_accessible_resources" : [
+        "bower_components/font-awesome/fonts/*"
+    ],
     "content_scripts": [
         {
             "matches": [
@@ -34,6 +37,7 @@
             "js": [
                 "scripts/requestInterceptor.js",
                 "scripts/so-auth.js",
+                "bower_components/moment/moment.js",
                 "bower_components/jquery/jquery.js",
                 "bower_components/underscore/underscore.js",
                 "bower_components/handlebars/handlebars.js",

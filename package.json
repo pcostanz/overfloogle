@@ -26,7 +26,8 @@
     "grunt-chrome-manifest": "~0.1.0",
     "time-grunt": "~0.1.1",
     "grunt-contrib-less": "~0.11.4",
-    "grunt-autoprefixer": "~1.0.1"
+    "grunt-autoprefixer": "~1.0.1",
+    "grunt-contrib-requirejs": "~0.4.4"
   },
   "engines": {
     "node": ">=0.8.0"
