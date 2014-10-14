@@ -1,19 +1,13 @@
 {
-    "name": "SOHint",
-    "version": "0.0.2",
+    "name": "Overfloogle",
+    "version": "0.0.1",
     "manifest_version": 2,
-    "description": "Stack Overflow Hints in Google Results",
+    "description": "A little more Stack Overflow up in your Googles",
     "icons": {
-        "16": "images/icon-16.png",
-        "128": "images/icon-128.png"
+        "16": "images/of-128.png",
+        "128": "images/of-128.png"
     },
     "default_locale": "en",
-    "permissions" :[
-        "tabs",
-        "activeTab",
-        "http://*.google.com/", 
-        "https://*.google.com/"
-    ],
     "background": {
         "scripts": [
             "scripts/background.js"
@@ -21,27 +15,35 @@
     },
     "page_action": {
         "default_icon": {
-            "19": "images/icon-19.png",
-            "38": "images/icon-38.png"
+            "19": "images/of-128.png",
+            "38": "images/of-128.png"
         },
         "default_title": "SOHint"
     },
     "options_page": "options.html",
+    "web_accessible_resources" : [
+        "bower_components/font-awesome/fonts/*"
+    ],
     "content_scripts": [
         {
             "matches": [
-                "http://*.google.com/", 
+                "http://*.google.com/",
                 "https://*.google.com/"
             ],
             "css": [
-                "styles/main.css",
+                "styles/css-less/main.css",
                 "bower_components/font-awesome/css/font-awesome.css"
             ],
             "js": [
+                "scripts/requestInterceptor.js",
+                "scripts/questionModel.js",
+                "scripts/questionsView.js",
                 "scripts/so-auth.js",
+                "bower_components/moment/moment.js",
                 "bower_components/jquery/jquery.js",
                 "bower_components/underscore/underscore.js",
                 "bower_components/handlebars/handlebars.js",
+                "bower_components/q/q.js",
                 "scripts/contentscript.js"
             ],
             "run_at": "document_end",

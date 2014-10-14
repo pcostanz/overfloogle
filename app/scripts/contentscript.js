@@ -1,119 +1,94 @@
-'use strict';
+(function(){
+  'use strict';
 
-// TODO: determine which channelUrl to use
-// for a chrome extension, currently the console
-// is throwing an exception stating that the
-// channel URL must be under the current domain
-// might be a weird thing with SO auth
- 
-$(document).ready(function(){
+  var execute = _.debounce(main, 800);
 
-  function checkForAppBar() {
-    var appbar = document.querySelector('#appbar');
+  document.addEventListener('googleSearchQuery', function(){
+    console.log('xhr intercepted');
 
-    if (appbar) {
-      // do stuff
-
-      var timeout = setTimeout(soHintItUp, 850);
-
-      var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation){
-          if(mutation.type === 'childList'){
-            console.log(mutation);
-            var throttledCall = _.throttle(soHintItUp, 550);
-            throttledCall();
-          }
-        });
-      });
-
-      var config = { attributes: true, childList: true, characterData: true };
-       
-      observer.observe(appbar, config);
-    }
-
-    else {
-      // check again in a bit
-      setTimeout(checkForAppBar, 1000);
-    }
-
-  }
-
-  checkForAppBar();
-
-
-
-});
-
-// TODO: onhashchange doesn't exactly pick up
-// each new google search. Explore other window
-// methods to use here.
-
-function soHintItUp() {
-  var questions = [];
-  var searchElements = $('.g');
-  var searchUrls = searchElements.find('.r a');
-  var urls = [];
-
-  console.log(searchUrls);
-
-  _.each(searchUrls, function(elem, index){
-
-    if(elem.hostname === 'stackoverflow.com') {
-
-      var parentElem = $(elem).closest('.g');
-      var href  = $(elem).attr('href');
-      var questionId = parseInt(href.split('/')[4]);
-
-      questions.push(questionId);
-
-      urls.push({
-        'linkIndex' : index,
-        'linkHref' : href,
-        'question_id' : questionId,
-        'is_answered' : null,
-        'view_count' : null,
-        'score' : null,
-        'answer_count' : null,
-        'accepted_answer_id' : null,
-        'parent_element' : parentElem
-      });
-    }
+    execute();
   });
 
-  if(questions) {
-    getQuestionsFromSO(questions.join(';'), urls, searchElements);
+  // @TODO: Build this into the QuestionsView
+
+  var questionsCache = {
+    prev: null,
+    next: null
+  };
+
+  // @TODO: It would be nice to construct the regex elsewhere and instantiate the matcher variable here
+
+  var regexProtocol = '^((http|https):\/\/)';
+  var stackoverflowUrl = 'stackoverflow\\.com\/questions\/[0-9]+\/';
+  var matcherRegex = new RegExp(regexProtocol + stackoverflowUrl);
+
+  var questionsView = new QuestionsView();
+
+  function main() {
+    console.log('executing main');
+
+    // @TODO: i can probably pass searchElements to _.each and then eliminate the part in questionModel where
+    // I have to find .closest('.g') - will need to revisit this logic because i'm doing some funky dom
+    // traversal
+
+    var searchElements = $('.g');
+    var searchUrls = searchElements.find('.r a');
+
+    questionsView.resetQuestions();
+
+    _.each(searchUrls, function(elem, index) {
+
+      if(matcherRegex.test(elem.href)) {
+        questionsView.addQuestion(new Question(elem, index));
+      }
+    });
+
+    // @TODO: Change the cache to use questionsView.questions_data so that the data
+    // can then be used to re-render the custom components in the case that the dom is reset
+    // by google but the results are the same. For now this is fine, but it would probably
+    // help with not hammering the stackoverflow API
+    questionsCache.next = questionsView.question_ids;
+
+    // @TODO: Add another validation step here to make sure that there are some custom elements
+    // still in the dom. Sometimes google can make some xhr requests and reset the dom when you
+    // actually didnt type anything that changed the search results
+    if (_.isEqual(questionsCache.next, questionsCache.prev)) {
+      console.log('same questions, stopping execution');
+      return;
+    } else {
+      console.log('distinct questions, setting cache', questionsCache);
+      questionsCache.prev = questionsCache.next;
+    }
+
+    if (!_.isEmpty(questionsView)) {
+      console.log('questions collection is not empty');
+      processQuestions(questionsView.question_ids.join(';'));
+    }
   }
 
-};
+  function processQuestions(ids) {
+    getQuestionData(ids).then(function(res) {
+      questionsView.extendQuestionData(res);
+      questionsView.renderQuestions();
+    });
+  }
 
-function getQuestionsFromSO(questions, urls, elements) {
-  var uri = 'https://api.stackexchange.com/2.1/questions/' + questions + '?site=stackoverflow';
-  var encodedURL = encodeURI(uri);
+  function getQuestionData(questions) {
+    var uri = 'https://api.stackexchange.com/2.1/questions/' + questions + '?site=stackoverflow';
+    var encodedURL = encodeURI(uri);
+    var deferred = Q.defer();
 
-  $.ajax({
-    url: encodedURL,
+    $.ajax({
+      url: encodedURL,
+      success: function(res) {
+        deferred.resolve(res);
+      },
+      error: function(err) {
+        console.error('Error with Stack Overflow API Request', err);
+        deferred.reject(err);
+      }
+    });
 
-    success: function(data) {
-      console.log('ajax request success');
-      // TODO: determine a way to cache old objects and parse through them before making another API request
-
-      var parsed = _.each(data.items, function(item){
-        _.each(urls, function(url){
-          if (item.question_id === url.question_id) {
-            console.log('match');
-            _.extend(url, item);
-
-            console.log(url.parent_element);
-
-            // TODO: Templatize this? I feel really icky
-            // about constructing html this way
-
-            url.parent_element.prepend('<div>Answered: ' + url.is_answered + ' Score: ' + url.score + ' Views: ' + url.view_count + ' Total Answers: ' + url.answer_count + '</div>');
-          }
-        });
-      });
-
-    }
-  });
-  console.log(urls);
-}
+    return deferred.promise;
+  }
+})();

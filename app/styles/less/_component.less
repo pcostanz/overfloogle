@@ -1,0 +1,116 @@
+// @TODO: TEMPORARY RESULT MOCK...REMOVE
+.TEMP-result {
+  margin-bottom: @search-result-margin-bottom;
+}
+
+.so-wrap {
+  border-radius: @border-radius;
+  font-family: @font-family;
+  font-size: @font-size;
+
+  // * Resets / Overrides *
+
+  * {
+    box-sizing: border-box;
+  }
+
+  button:focus {
+    outline: none;
+  }
+
+  // @NOTE: Content loader is currently not implmemented, these styles along with the
+  // expander styles are not used in the current release
+
+  //  .so-content {
+  //    height: 0;
+  //    overflow: hidden;
+  //    transition: height 100ms linear;
+  //
+  //    &.loaded {
+  //      height: 400px;
+  //      overflow-y: scroll;
+  //      margin-bottom: @search-result-margin-bottom + 10px;
+  //    }
+  //  } // .so-content
+
+  //  .so-expander {
+  //    button {
+  //      .button-colors(@color-expander, @color-expander-hover);
+  //      .square(24px);
+  //      border: none;
+  //      border-radius: @border-radius;
+  //      cursor: pointer;
+  //      bottom: 0;
+  //      position: absolute;
+  //      right: 0;
+  //
+  //      .loading& i {
+  //        animation: loading 0.65s infinite ease-in-out;
+  //      }
+  //    } // button
+  //  } // .so-expander
+
+  .so-tags {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    button {
+      .button-colors(@color-tag, @color-tag-hover);
+      border: none;
+      border-radius: @border-radius;
+      cursor: pointer;
+      display: inline-block;
+      font-size: @font-size-tag;
+      margin-right: @button-spacing;
+      vertical-align: top;
+    }
+  } // .so-tags
+
+  .so-item {
+    display: flex;
+    margin-bottom: @search-result-margin-bottom;
+    margin-left: -@scorecard-width;
+  }
+
+  .so-scorecard {
+    border-right: 5px solid @color-tag;
+    flex: 1 0 auto;
+    margin-right: 5px; // @TODO: Both should be a single var divided by 2 so that universal spacing can be applied through the widget using it (10px)
+    padding-right: 5px;
+    transform: translateX(@scorecard-width);
+    transition: transform 100ms ease-in-out;
+    width: @scorecard-width;
+
+    &.slideout {
+      transform: translateX(0);
+    }
+
+    .answered {
+      color: @color-answered;
+    }
+
+    .unanswered {
+      color: @color-unanswered;
+    }
+
+    > div {
+      padding: 2px 0;
+
+      i {
+        padding-right: 2px;
+      }
+    } // > *
+  } // .so-scorecard
+
+  .so-result {
+    background: white;
+    flex: 100 1 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  i + span {
+    padding-left: 5px;
+  }
+} // .so-wrap
