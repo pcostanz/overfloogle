@@ -3,17 +3,10 @@
   margin-bottom: @search-result-margin-bottom;
 }
 
-.so-wrap { // nest styles to ensure specificity
+.so-wrap {
   border-radius: @border-radius;
   font-family: @font-family;
   font-size: @font-size;
-
-  &:hover,
-  &.active {
-
-  }
-
-  transition: transform 0.5s ease-in-out;
 
   // * Resets / Overrides *
 
@@ -25,23 +18,37 @@
     outline: none;
   }
 
-  // * Component Styling *
+  // @NOTE: Content loader is currently not implmemented, these styles along with the
+  // expander styles are not used in the current release
 
-  .so-content {
-    height: 0;
-    overflow: hidden;
-    /* padding: 0 10px; might need some padding here */
-    transition: height 100ms linear;
+  //  .so-content {
+  //    height: 0;
+  //    overflow: hidden;
+  //    transition: height 100ms linear;
+  //
+  //    &.loaded {
+  //      height: 400px;
+  //      overflow-y: scroll;
+  //      margin-bottom: @search-result-margin-bottom + 10px;
+  //    }
+  //  } // .so-content
 
-    &.loaded {
-      height: 400px;
-      overflow-y: scroll;
-      margin-bottom: @search-result-margin-bottom + 10px;
-    }
-    // @TODO: Styling - this could be a lot
-    // since we need to make a stack overflow
-    // question and then accepted answer load
-  }
+  //  .so-expander {
+  //    button {
+  //      .button-colors(@color-expander, @color-expander-hover);
+  //      .square(24px);
+  //      border: none;
+  //      border-radius: @border-radius;
+  //      cursor: pointer;
+  //      bottom: 0;
+  //      position: absolute;
+  //      right: 0;
+  //
+  //      .loading& i {
+  //        animation: loading 0.65s infinite ease-in-out;
+  //      }
+  //    } // button
+  //  } // .so-expander
 
   .so-tags {
     position: absolute;
@@ -55,81 +62,55 @@
       cursor: pointer;
       display: inline-block;
       font-size: @font-size-tag;
-      margin-left: 5px;
+      margin-right: @button-spacing;
       vertical-align: top;
     }
   } // .so-tags
 
-  .so-expander {
-    button {
-      .button-colors(@color-expander, @color-expander-hover);
-      .square(24px);
-      border: none;
-      border-radius: @border-radius;
-      cursor: pointer;
-      bottom: 0;
-      position: absolute;
-      right: 0;
-
-      .loading& i {
-        animation: loading 0.65s infinite ease-in-out;
-      }
-    } // button
-  } // .so-expander
-
   .so-item {
-    background: white;
     display: flex;
-    margin-bottom: 23px;
+    margin-bottom: @search-result-margin-bottom;
+    margin-left: -@scorecard-width;
   }
 
   .so-scorecard {
-    // experimental
-
-    // not sure if this is a better way to get spacing after the border
-    /*    &:after {
-          content: '';
-          display: block;
-          height: 100%;
-          width: 5px;
-          background: @color-tag;
-        }*/
-
     border-right: 5px solid @color-tag;
-    margin-right: 5px; // @TODO: Both should be a single var divided by 2 so that universal spacing can be applied through the widget using it (10px)
     flex: 1 0 auto;
+    margin-right: 5px; // @TODO: Both should be a single var divided by 2 so that universal spacing can be applied through the widget using it (10px)
+    padding-right: 5px;
+    transform: translateX(@scorecard-width);
+    transition: transform 100ms ease-in-out;
+    width: @scorecard-width;
 
-    > * {
-      padding: 2px 5px;
+    &.slideout {
+      transform: translateX(0);
+    }
+
+    .answered {
+      color: @color-answered;
+    }
+
+    .unanswered {
+      color: @color-unanswered;
+    }
+
+    > div {
+      padding: 2px 0;
 
       i {
         padding-right: 2px;
       }
-    }
-
-    padding-right: 5px;
-
-    transition: 100ms width linear;
-
-    &.nope {
-      border: 0;
-      padding: 0;
-      margin: 0;
-      width: 0;
-      height: 0;
-      overflow: hidden;
-    }
-  }
+    } // > *
+  } // .so-scorecard
 
   .so-result {
+    background: white;
     flex: 100 1 auto;
     position: relative;
+    z-index: 1;
   }
 
-
-  // button styles
   i + span {
     padding-left: 5px;
   }
-
 } // .so-wrap
