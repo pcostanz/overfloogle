@@ -1,10 +1,13 @@
-// @TODO: TEMPORARY RESULT MOCK...REMOVE
-.TEMP-result {
-  margin-bottom: @search-result-margin-bottom;
-}
+// Overfloogle component styles
+// ----------------------------
+
+@import (reference) "_variables";
+@import (reference) "_mixins";
+
+// Output Styles
+// -------------
 
 .so-wrap {
-  border-radius: @border-radius;
   font-family: @font-family;
   font-size: @font-size;
 
@@ -29,7 +32,7 @@
   //    &.loaded {
   //      height: 400px;
   //      overflow-y: scroll;
-  //      margin-bottom: @search-result-margin-bottom + 10px;
+  //      margin-bottom: @result-margin-bottom + 10px;
   //    }
   //  } // .so-content
 
@@ -58,26 +61,26 @@
     button {
       .button-colors(@color-tag, @color-tag-hover);
       border: none;
-      border-radius: @border-radius;
+      border-radius: @tag-border-radius;
       cursor: pointer;
       display: inline-block;
       font-size: @font-size-tag;
-      margin-right: @button-spacing;
+      margin-right: @gutter-width;
       vertical-align: top;
     }
   } // .so-tags
 
   .so-item {
     display: flex;
-    margin-bottom: @search-result-margin-bottom;
-    margin-left: -@scorecard-width;
+    margin-bottom: @result-margin-bottom;
+    margin-left: -@item-offset;
   }
 
   .so-scorecard {
-    border-right: 5px solid @color-tag;
+    border-right: @scorecard-border-width solid @color-tag;
     flex: 1 0 auto;
-    margin-right: 5px; // @TODO: Both should be a single var divided by 2 so that universal spacing can be applied through the widget using it (10px)
-    padding-right: 5px;
+    margin-right: @gutter-width;
+    padding-right: @gutter-width;
     transform: translateX(@scorecard-width);
     transition: transform 100ms ease-in-out;
     width: @scorecard-width;
@@ -104,7 +107,7 @@
   } // .so-scorecard
 
   .so-result {
-    background: white;
+    background: @color-bg;
     flex: 100 1 auto;
     position: relative;
     z-index: 1;
@@ -114,3 +117,11 @@
     padding-left: 5px;
   }
 } // .so-wrap
+
+// @TODO: Fix, this was originally an artifact of the prototype but it may need to stay
+//        to ensure that the result-margin-bottom is applied, this is necessary because
+//        google is using a last-of-type margin-bottom on list items and overfloogle wraps
+//        the list items in a div so they are always last (and thus always the wrong margin)
+.TEMP-result {
+  margin-bottom: @result-margin-bottom;
+}
